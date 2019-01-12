@@ -1,0 +1,408 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+    <title>xyTree使用示例</title>
+    <link type="text/css" rel="stylesheet" href="xyTree/xtree.css" />
+    <!-- 按照很多高手建议，所有的文件都应UTF－8编码，我sorry，用GBK -->
+
+
+    <!-- 为了使用无复选框树，无顺序 -->
+    <script src="xyTree/TreeNormal.js"></script>
+    <script src="xyTree/NodeNormal.js"></script>
+    <script src="xyTree/DivTreeNormal.js"></script>
+
+    <!-- 为了使用带复选框树，无顺序 -->
+    <script src="xyTree/DivTree.js"></script>
+    <script src="xyTree/Tree.js"></script>
+    <script src="xyTree/Node.js"></script>
+
+    <!-- 数据js文件，必须最后加载,除了ajax树，因为是空的 -->
+    <script src="data_example1.js"></script>
+    <script src="data_example2.js"></script>
+    <script src="data_example3.js"></script>
+    <script src="data_example4.js"></script>
+    <script src="data_example5.js"></script>
+    <script src="data_example6.js"></script>
+
+
+    <script>
+//这句话重要，要写前面
+  var Content2 = new xyTree.DivTree('《精通CSS》...');
+
+//初始化方法
+function init(){
+  //行政区划树
+  document.getElementById('ceshi1').appendChild(treeXiaqu.div);
+  treeXiaqu.init(huidiao_Example1_Node, huidiao_Example1_RootNode); //这是自定义回调函数
+  
+  //xieye的最爱树
+  document.getElementById('ceshi2').appendChild(myLove.div);
+  myLove.init(huidiao_Example2_Node);
+  
+  //精通《CSS》树
+  document.getElementById('ceshi3').appendChild(Content.div);
+  Content.init(huidiao_Example3_Node, huidiao_Example1_RootNode);
+  
+  //我的电脑树
+  document.getElementById('ceshi4').appendChild(myPC.div);
+  myPC.init();//初始化方法不同
+  
+  //分局树2
+  document.getElementById('ceshi5').appendChild(treeFenju2.div);
+  treeFenju2.init();//初始化方法不同
+  
+  //分局树3
+  document.getElementById('ceshi6').appendChild(treeFenju3.div);
+  treeFenju3.init();//初始化方法不同
+  
+  //精通《CSS》树，模拟ajax
+  document.getElementById('ceshi7').appendChild(Content2.div);
+  Content2.init(huidiao_Example77,huidiao_Example77);
+  
+
+}
+
+//这个函数需要用户写
+function huidiao_Example1_Node(node){
+  var  s = '行政区划代码：' + node.id 
+          + '\n行政代码名称：' + node.name 
+          + '\n节点序号：' + node.xuhao;
+  alert(s);
+}
+
+//这个函数需要用户写,根节点，注意this的使用，
+//  也可以换成树的对象名。
+function huidiao_Example1_RootNode(){
+  var s='';
+  s+='当前树：';
+  s+='\n节点总数(不含根节点) = '+(this.tree.treeArray.length-1);
+  s+='\n层数(不含根节点的层) = '+this.tree.maxlevel;
+  s+='\n根节点名称 = '+this.tree.treeArray[0].name;
+  alert(s);
+}
+
+//用到的parent,tree等属性可以在API帮助中查到
+function huidiao_Example2_Node(node){
+  var s;
+  s = node.name;
+  ee(node);
+  alert(s);
+  //递归
+  function ee(node){
+    var parent = node.parent;
+    s = parent.name + '/' + s;
+    if (parent == node.tree.root) return;
+    ee(parent);
+  };
+}
+
+//例子3《精通CSS》树的回调
+function huidiao_Example3_Node(node){
+  var s;
+  //打印3个属性，节点的属性只有name是必须的，别的是在js文件自行添加
+  s =  '[' + node.name + ']开始于第' + node.page 
+      + '页，字数是' + node.zishu;
+  alert(s);
+}
+
+
+//为了演示效果定义的全局变量 
+var loadinggifnode;
+
+
+//想模拟ajax的朋友请看这里，  将来会专门写AjaxTree类和AjaxTreeNormal类
+
+function huidiao_Example77(node){
+  loadinggifnode = node; //为了使用定时器，没法带参数，只好使用全局变量
+  if (node.child.length>0)return; //如果已经添加了子节点则返回
+  if(node.nochild)return;         //如果节点有这个属性也返回，这个属性是给节点赋值时加的
+  
+  node.loadingGif();              //显示动画，表示需要从服务器获取子节点 
+  setTimeout("huidiao_Example78()",1000);  //模拟ajax，调用下面的方法
+}
+
+function huidiao_Example78(){   //这个函数模拟服务器的回调
+  var arr = {  //假定结果都有了
+    '《精通CSS》...' :  ['第1章 基础知识...', '第2章 可视化格式模型...', '第3章 背景图像和图像替换...'],
+    '第1章 基础知识...' :  ['1.1 设计代码的结构...', '1.2 为样式找到目标...', '1.3 规划、组织和维护样式表...'],
+    '第2章 可视化格式模型...' :  ['2.1 框模型概述...', '2.2 定位概述...'],
+    '第3章 背景图像和图像替换...' :  ['3.1 背景图像基础', '3.2 圆角框','3.3 阴影' , '3.3 图像替换'],
+    '1.1 设计代码的结构...' :  ['1.1.1 使用有意义的标记','1.1.2 文档类型、DOCTYPE切换和浏览器模式'],
+    '1.2 为样式找到目标...' :  ['1.2.1 常用的选择器','1.2.2 通用选择器','1.2.3 高级选择器','1.2.4 层叠和特殊性','1.2.5 继承'],
+    '1.3 规划、组织和维护样式表...' :  ['1.3.1 对文档应用样式','1.3.2 对代码进行注释','1.3.3 样式指南','1.3.4 组织样式表以便简化维护'],
+    '2.1 框模型概述...' :  ['2.1.1 IE/Win和框模型','2.1.2 空白边叠加'],
+    '2.2 定位概述...' :  ['2.2.1 视觉格式化模型','2.1.2 空白边叠加','2.2.3 绝对定位','2.2.4 浮动']
+  };
+  
+  var nodearr = [];
+  var strarr = arr[loadinggifnode.name]; //使用对象的关联数组特性
+  for(var i=0;i < strarr.length;i++){    //    获得节点的下一级子节点
+    var newnode = new xyTree.Node(strarr[i]);
+    newnode.toString = function (){return this.name;};//为了显示结果
+    if(!((/\.\.\./).test(strarr[i])))  {//如果是...结尾的，加个属性
+
+      newnode.nochild = true; //这句话是重要的，免得没子节点还ajax，自定义属性
+    }
+    nodearr.push(newnode);   
+  } 
+  loadinggifnode.addDynamic(nodearr); //动态添加
+  loadinggifnode.loadingGifRenew(); //其实这句话完全可以不加
+}
+
+
+
+
+//以下几个函数是第一个示例的各种方法，注意它们的使用
+//返回选中的记录（最常用，不含子节点）
+function test(){
+  var a = treeXiaqu.getNodes();
+  if(a.length>0) alert(a.toString());
+  else alert('请选中复选框'); 
+}
+
+//返回选中的记录（所有的），我的函数命名不好。
+function test2(){
+  var a =treeXiaqu.getNodesAll();
+  if(a.length>0) alert(a.toString());
+  else alert('请选中复选框'); 
+}
+
+//返回选中的记录（叶节点）
+function test3(){
+  var a =treeXiaqu.getNodesMoji();
+  if(a.length>0) alert(a.toString());
+  else alert('请选中复选框'); 
+}
+
+//返回选中的记录（叶节点）
+function test4(){
+  var a =treeXiaqu.getNodesDisplay();
+  if(a.length>0) alert(a.toString());
+  else alert('请选中复选框'); 
+}
+
+
+
+
+
+
+
+//测试demo7的返回节点是否正确
+function testdemo7(){
+  var a = Content2.getNodes();
+  if(a.length>0) alert(a.toString());
+  else alert('请选中复选框'); 
+}
+
+
+//隐藏树干
+function hidetree(){
+  treeXiaqu.hideTreeBody();
+}
+
+//显示树干
+function showtree(){
+  treeXiaqu.showTreeBody();
+}
+
+//清空所有复选框
+function clear2(){
+  treeXiaqu.initClearAllCheckBox();
+}
+
+//只复位形状
+function clear3(){
+  treeXiaqu.initTreeForm();
+}
+
+//完全复位树
+function clear4(){
+  treeXiaqu.initReset();
+}
+
+//定位一个节点
+function expand(){
+	var name = document.getElementById('select').value;//得到名字
+  var node  = treeXiaqu.findOneNodeByName(name);//得到节点
+  if(node)
+   treeXiaqu.expandNode(node);//展开，有异常自动终止
+}
+
+//批量定位节点
+function expand2(){
+  treeXiaqu.initReset();
+  var arr = [];
+  var divarr = 
+    document.getElementById('select').getElementsByTagName('option');
+  //获得复选框里的名称指定的节点
+  for(var i=0;i<divarr.length; i++){
+    var node =  treeXiaqu.findOneNodeByName(divarr[i].value);
+    if(node)  
+      arr.push(node);
+  }
+  //自动的把一些节点展开，700这个参数可以不加，有默认时间，数字大，则时间长
+  for(var i=0;i<arr.length; i++)
+   treeXiaqu.expandNode(arr[i], 700);//展开
+}
+
+//批量定位节点并打勾
+function expand3(){
+  treeXiaqu.initReset();
+  var arr = [];
+  var divarr = 
+    document.getElementById('select').getElementsByTagName('option');
+  //获得复选框里的名称指定的节点
+  for(var i=0;i<divarr.length; i++){
+    var node =  treeXiaqu.findOneNodeByName(divarr[i].value);
+    if(node)  
+      arr.push(node);
+  }
+  //自动的把一些节点展开，700这个参数可以不加，有默认时间，数字大，则时间长
+  for(var i=0;i<arr.length; i++)
+   treeXiaqu.expandCheckedNode(arr[i], 700);//展开
+   
+}
+
+//批量定位节点并打勾，最后收缩
+function expand4(){
+  expand3();
+  //xieye:如果想把形状初始化则执行下面一句：
+   treeXiaqu.initTreeForm();
+   treeXiaqu.expandNode(treeXiaqu.tree.treeArray[0], 1);//这句话目的只是定位
+
+}
+
+//这两个函数分别展示了动态添加子节点的功能
+//注意：添加子节点的节点本身必须在树上（但不一定可见）
+//另：如果是根节点添加，直接用树添加，不必非要用节点
+function test22(){
+  var node1text = document.getElementById('text1').value;
+  var node1 = treeXiaqu.findOneNodeByName(node1text);
+  if(!node1){alert('请选择存在的节点');return;}
+  
+  var node2text = document.getElementById('text2').value;
+  var node = new xyTree.Node(node2text);
+  
+  node1.addDynamic(node);
+}
+
+//动态添加数组
+function test23(){
+  var node1text = document.getElementById('text1').value;
+  var node1 = treeXiaqu.findOneNodeByName(node1text);
+  if(!node1){alert('请选择存在的节点');return;}
+  
+  node1.addDynamic([new xyTree.Node('地区1'),new xyTree.Node('地区2'),new xyTree.Node('地区4')]);
+}
+
+
+//定义初始化程序
+window.onload = init;	
+</script>
+
+    <style>
+      .size1{
+        font:12px normal 宋体;
+      }
+    </style>
+  </head>
+
+
+
+  <body>
+
+    <a href="API.html">《xyTree4.12》使用API手册</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;最新功能见示例7
+
+    <div style="border:solid 1px black; padding:10px;">
+      示例1
+      <span class="size1">（带复选框，为您展示无限可能）</span>
+      <br />
+      <input type="button" value="根节点完全选中吗"
+        onclick="alert(treeXiaqu.isSelectAll());" />&nbsp;
+      <input type="button" value="返回选中的记录（不含子节点，较常用）" onclick="test()" /><br /><br />
+      <input type="button" value="返回选中的记录（全部）" onclick="test2()" /> &nbsp;
+      <input type="button" value="返回选中的记录（末端节点，就是叶节点）" onclick="test3()" />  <br /><br />
+      <input type="button" value="返回选中的记录（正在打开的最末级节点，不一定是叶节点）" onclick="test4()" />  <br /><br />
+      <input type="button" value="隐藏树身" onclick="hidetree()" />      &nbsp;
+      <input type="button" value="显示树身" onclick="showtree()" />      &nbsp;
+      <input type="button" value="清空所有节点" onclick="clear2()" />      &nbsp;
+      <input type="button" value="树的形状复位" onclick="clear3()" />      &nbsp;
+      <input type="button" value="树的形状复位+清空所有节点" onclick="clear4()" /> <br /> <br />
+      <select id="select">
+        <option value="（请选择）">（请选择）</option>
+        <option value="北京市">北京市</option>
+        <option value="江苏省">江苏省</option>
+        <option value="西城区">西城区</option>
+        <option value="海淀区">海淀区</option>
+        <option value="南京市">南京市</option>
+        <option value="镇江市">镇江市</option>
+        <option value="栖霞区">栖霞区</option>
+        <option value="六合区">六合区</option>
+        <option value="临沂市">临沂市</option>
+        <option value="瞎 写"> 瞎 写</option>
+      </select>
+      &nbsp;
+      <input type="button" value="展开一个节点" onclick="expand()" />   &nbsp;
+      <input type="button" value="复位+自动展开几个节点" onclick="expand2()" /> 
+      <input type="button" value="复位+自动展开几个节点并选中" onclick="expand3()" />   <br />
+      <input type="button" value="复位+自动展开几个节点并选中再收缩" onclick="expand4()" />   <br />   <br />
+   
+    往<input type="text" id="text1" size="10"/>节点
+    <input type="button" value="动态添加子节点" onclick="test22()" />
+    <input type="text" id="text2" size="10"/>&nbsp;&nbsp;
+    或者
+    <input type="button" value="动态添加数组[“地区1”“地区2”“地区4”]" 
+      onclick="test23()" style="width:300px;"/>
+    <br/>      
+      <!--  这里就是第一棵树的摆放位置  -->
+      <div id="ceshi1"></div>
+    </div>
+
+    <br />
+
+    <div id="div6" style="border:solid 1px black; padding:10px;">
+      示例7<span style="font:40px bole 宋体">new！</span>
+      <span class="size1">（展示模拟<span style="color:red">ajax</span>的用法）</span>
+      <input type="button" value="返回选中的记录（不含子节点，较常用）" onclick="testdemo7()" />
+      <div id="ceshi7"></div>      <br />
+    </div>
+
+    <br />
+
+
+
+    示例2
+    <span class="size1">（带复选框，点击节点递归显示节点路径）</span>
+    <div id="ceshi2"></div>    <br />
+    示例3
+    <span class="size1">（不带复选框，展示自定义节点额外属性，定义在数据文件中）</span>
+    <div id="ceshi3"></div>    <br />
+
+    <div style="border:solid 1px black; padding:10px;">
+      示例4
+      <span class="size1">（看出来和我的电脑的差别吗？自定义图片）</span>
+      <div id="ceshi4"></div>     
+    </div>
+    <br />
+
+
+    <div id="div5" style="border:solid 1px black; padding:10px;">
+      示例5
+      <span class="size1">（展示默认节点的单击方法，init方法不带参数）</span>
+      <div id="ceshi5"></div>      <br />
+      示例6
+      <span class="size1">（与上面的区别是，默认为点击文件夹图标而不是复选框）</span>
+      <div id="ceshi6"></div>      <br />
+    </div>
+
+    <br />
+
+
+
+
+
+  </body>
+</html>

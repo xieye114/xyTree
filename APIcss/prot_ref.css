@@ -1,0 +1,183 @@
+BODY {
+	PADDING-RIGHT: 10px; 
+	PADDING-LEFT: 10px; 
+	FONT-SIZE: 0.8em; 
+	PADDING-BOTTOM: 10px; 
+	MARGIN: 0px; 
+	PADDING-TOP: 10px; 
+	FONT-FAMILY: 'Courier New',Verdana, Arial, Helvetica; 
+	width:70%;
+}
+
+h1{font-size: 30px;}
+h2{font-size: 24px;margin-bottom:0px;padding-bottom:0px;}
+h3{font-size: 30px;}
+h4{font-size: 18px;margin-bottom:0px;padding-bottom:0px;}
+h5{font-size: 30px;}
+h6{font-size: 14px;}
+
+table {
+  border-collapse: collapse;
+  border: 1px solid #666;
+	width:100%;
+  table-layout :  auto 
+}
+
+caption {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 1em 0;
+}
+
+col {
+  border-right: 1px solid #ccc;
+}
+
+col#albumCol {
+  border: none;
+}
+
+
+th {
+  font-weight: bold;
+  text-align: left;
+	BACKGROUND-COLOR: #800;   
+  COLOR: #fff;
+ 	FONT-SIZE: 16px;  
+ 	
+}
+td {
+  COLOR: #111;
+}
+
+
+#playlistPosHead {
+  text-indent: -1000em;
+}
+
+th, td {
+  padding: 8px;
+}
+
+
+tr:hover {
+  background-color:#ffffcc;
+  color: black;
+}
+
+thead tr:hover {
+  background-color: transparent;
+  color: inherit;
+}
+
+
+.odd {
+  background-color:#edf5ff;
+}
+
+
+
+
+
+
+
+
+
+
+#toc {
+	MARGIN: 5px
+}
+#toc A {
+	TEXT-DECORATION: none
+}
+#toc LI {
+	LIST-STYLE-TYPE: none
+}
+#mainContent {
+	MARGIN: 0px auto; WIDTH: 80%; TEXT-ALIGN: left
+}
+P {
+	MARGIN: 5px
+}
+P A {
+	COLOR: #00f; TEXT-DECORATION: none
+}
+A SPAN.code {
+	COLOR: #00f; TEXT-DECORATION: none
+}
+P.backToc {
+	MARGIN: 0px; TEXT-ALIGN: right
+}
+A:visited {
+	COLOR: #00f
+}
+P.footNote {
+	PADDING-RIGHT: 5px; MARGIN-TOP: 20px; PADDING-LEFT: 5px; PADDING-BOTTOM: 5px; PADDING-TOP: 5px; BACKGROUND-COLOR: #fcffc3
+}
+P A:hover {
+	TEXT-DECORATION: underline
+}
+A:hover SPAN.code {
+	TEXT-DECORATION: underline
+}
+H1 A {
+	COLOR: #69f; TEXT-DECORATION: none
+}
+H1 A:visited {
+	COLOR: #69f; TEXT-DECORATION: none
+}
+H1 A:hover {
+	TEXT-DECORATION: underline
+}
+DIV.author {
+	FONT-SIZE: 1em; RIGHT: 0px; COLOR: #777; FONT-STYLE: italic; TEXT-ALIGN: right
+}
+#versions {
+	RIGHT: 0px; TEXT-ALIGN: right
+}
+PRE.code {
+	BORDER-RIGHT: black 1px solid; 
+	PADDING-RIGHT: 5px; 
+	BORDER-TOP: black 1px solid; 
+	PADDING-LEFT: 5px; 
+	PADDING-BOTTOM: 5px; 
+	BORDER-LEFT: black 1px solid; 
+	COLOR: #000; 
+	PADDING-TOP: 5px; 
+	BORDER-BOTTOM: black 1px solid; 
+/*	font: normal 12px  'Courier New';*/
+	font-size:11px;
+	FONT-FAMILY: 'Courier New'; 
+	BACKGROUND-COLOR: #ccc
+	
+}
+CODE STRONG.highlite {
+	COLOR: #c00
+}
+.objectClass {
+	FONT-FAMILY: 'Courier New', Courier, Monospace
+}
+.functionName {
+	FONT-FAMILY: 'Courier New', Courier, Monospace
+}
+.code {
+	FONT-FAMILY: 'Courier New', Courier, Monospace
+}
+P .functionName {
+	FONT-SIZE: 16pt
+}
+P .code {
+	FONT-WEIGHT: bold; FONT-SIZE: 11pt; COLOR: #800
+}
+P .objectClass {
+	FONT-WEIGHT: bold; FONT-SIZE: 11pt; COLOR: #800
+}
+
+.bold{
+ margin-top:5px;
+ margin-bottom:5px;
+ 
+ font-size:14px;
+ font-weight :bold;
+}
+

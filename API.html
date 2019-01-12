@@ -1,0 +1,1087 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<title>xyTreeAPI文档</title>
+<link href="APIcss/prot_ref.css" type="text/css" rel="stylesheet" />
+
+<script>
+	/*
+	在两种浏览器上都显示出漂亮的文档真难
+	*/
+	
+	function init(){
+	  var tables = document.getElementsByTagName('table');
+	  //添加错行的样式背景
+	  for(var i=0;i<tables.length; i++){
+	    var table = tables[i];
+	    var trs = table.getElementsByTagName('tr');
+	    for(var j=0;j<trs.length; j++){
+	  		if(j%2 == 0){
+	  		  trs[j].setAttribute('class','odd');
+	  		  trs[j].setAttribute('className','odd');
+	  		}
+	  	}
+	  }
+	}
+window.onload = init;
+</script>
+
+</head>
+
+
+
+<body>
+作者Email:xieye114@yahoo.com.cn
+<br />
+<a href="index.html">看详细的例子</a>
+<br />
+<br />
+<br />
+
+<h1 align="center">《xyTree4.12使用手册》</h1>
+
+<a name="gaishu:"><!-- --></a>
+	<h2>概述：</h2>
+	为了在HTML页面中使用树，我写了这几个js文件，参照了国外网站的xTree，
+	图片也基本是用它的，生成的DOM结构也和它几乎一样，只是代码彻底的不同。
+	<br />载入文件的图片loading.gif从流行框架ext拷贝而来
+<br />&nbsp;&nbsp;&nbsp;这个树的组件主要有：
+<br />6个js程序文件
+<br />1个css文件
+<br />1个images文件夹，内有几张图片
+<br />用户自己的数据文件，可以搞成js文件形式，也可以在java程序中写好，传给jsp。
+
+	<div class="bold">主要不同点：</div>
+	&nbsp;&nbsp;&nbsp;&nbsp;我有复选框。<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;xTree是在初始化树时，就把DOM结构全部生成，(所以初始化慢，点击节点快)。
+	<br />&nbsp;&nbsp;&nbsp;&nbsp;xyTree是当点击加号时，生成DOM结构，点击减号就隐藏，
+	再点击加号时只是简单的去掉隐藏，所有如某个节点下有多个节点，
+	第一次点击会稍慢些。(所以初始化快，点击节点稍慢，但可接收)
+	<div class="bold">另外：</div>
+<ul>
+		<li>在IE6.0和FireFox2.0测试通过，一个字，快！</li>
+		<li>请仔细看文档最后的版本更新说明</li>
+		<li>如想使用，只需把xyTree文件夹拷贝出来即可，数据文件要自己写，或用java/jsp生成</li>
+		<li>要简单，没有运行时删除节点的方法，但有了动态添加节点的功能</li>
+		<li>不能拖动</li>
+		<li>点击节点会有反应，可以自己写函数</li>
+		<li>后缀是Normal的类用于普通树，另外3个用于复选框树</li>
+		<li>如果某个页面要同时出现这两种树，就加载6个js文件，否则加载3个</li>
+		<li>样式表xtree.css通用</li>
+		<li>6个类之间没有继承关系，其实不好，有组合关系，下一个版本就使用继承</li>
+		<li>基于对象的使用方式，可以在页面中放置任意棵树，互相不会受影响。</li>
+		<li>完全开源</li>
+		<li>使用命名空间xyTree</li>
+		<li>只要发挥想象力，还可以有很多方法可以添加，主要看业务需求</li>
+    <li>这一版无复选框树有部分功能仍未实现，下一版本4.2会使用继承的语法统统实现</li>
+    <li>关于动态添加节点的说明参见<a href="#DivTree">DivTree</a></li>
+    
+</ul>		
+	
+
+<br />
+<br />
+<br />
+<br />
+
+
+<a name="leiyilan"><!-- --></a>
+<h2>类一览</h2>
+<p>
+	<a href="#DivTreeNormal">DivTreeNormal</a><br/>
+	<a href="#TreeNormal">TreeNormal</a><br/>
+	<a href="#NodeNormal">NodeNormal</a><br/><br/>
+	<a href="#DivTree">DivTree</a><br/>
+	<a href="#Tree">Tree</a><br/>
+	<a href="#Node">Node</a>
+</p>	
+	
+<br />
+<br />
+<br />
+<br />
+
+
+
+
+<!-- 第一个类 -->
+<a name="DivTreeNormal"><!-- --></a>
+<h2>类 DivTreeNormal</h2>
+
+<h6>	DivTreeNormal代表普通树。(有部分功能暂未实现，下一版补齐)</h6>
+在数据js文件中添加节点时必须按顺序，以下代码会产生错误：
+<pre style="font:normal 12px 'Courier New';">node1 = new xyTree.Node('下关分局');
+node1.id = 1;
+tree1.add(node1);
+
+node222 = new xyTree.Node('玄武分局');
+node222.id = 3;
+tree1.add(node222);
+
+node2 = new xyTree.Node('下关派出所1');
+node2.id = 2;
+node1.add(node2);
+</pre>
+以下代码是正确的：
+<pre style="font:normal 12px 'Courier New';">node1 = new xyTree.Node('下关分局');
+node1.id = 1;
+tree1.add(node1);
+
+node2 = new xyTree.Node('下关派出所1');
+node2.id = 2;
+node1.add(node2);
+
+node222 = new xyTree.Node('玄武分局');
+node222.id = 3;
+tree1.add(node222);
+</pre>	
+1)必须以深度遍历的方式初始化树的所有节点
+<br/>2)如想修改单击节点的反应要自己写回调函数，见HTML示例
+<br/>3)点击根节点图标，会收缩，再点击，展开
+<br/>4)根节点图片和一般节点的缺省图片都可以换，如果不喜欢那个文件夹的话，在本类中修改全局变量xyTree.TreeConfig即可	
+<br/>5)也可以用img属性替节点指定不同的图片
+	
+	<br />下面给出了一个最简单的例子： 
+
+<pre class="code" ><code style="FONT-FAMILY: 'Courier New';">
+&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; 
+&quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=gb2312&quot; /&gt;
+&lt;title&gt;xyTree&lt;/title&gt;
+&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;xyTree/xtree.css&quot; /&gt; 
+&lt;script src=&quot;xyTree/TreeNormal.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;xyTree/NodeNormal.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;xyTree/DivTreeNormal.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;data_example3.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+function init(){
+  document.getElementById('ceshi3').appendChild(Content.div);
+  Content.init();
+}
+window.onload = init; 
+&lt;/script&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+&lt;div id=&quot;ceshi3&quot;&gt;&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+ 
+<h4>另请参见：</h4>
+<p>
+	<a href="#DivTree">DivTree</a>
+</p>
+	
+<table class="reference" cellspacing="0" border="1" >
+  <tbody>
+  <tr>
+    <th>域和方法</th>
+    <th>返回值</th>
+    <th>参数</th>
+    <th>描述</th></tr>
+  <tr>
+    <td>DivTreeNormal(String name)</td>
+    <td>构造方法，返回一个DivTreeNormal对象</td>
+    <td>name:根节点名称</td>
+    <td>
+    	建立一个普通树对象。
+    	</td></tr>
+  <tr>
+    <td>DivTreeNormal(String name,String img)</td>
+    <td>构造方法，返回一个DivTreeNormal对象</td>
+    <td>name:根节点名称<br/>img:用户指定的根节点图标</td>
+    <td>
+    	建立一个普通树对象。并指定了根节点图标
+    	</td></tr>
+  <tr>
+    <td>tree</td>
+    <td>TreeNormal</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得树的包含所有节点的对象
+    	</td></tr>
+  <tr>
+    <td>div</td>
+    <td>HTMLElement</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得树的div对象
+    	</td></tr>
+  <tr>
+    <td>init()</td>
+    <td>(none)</td>
+    <td>(none)</td>
+    <td>
+    	把树的第1级节点显示出来，只用于初始化时
+    	</td></tr>
+  <tr>
+    <td>init(Function funa,Function funb)</td>
+    <td>(none)</td>
+    <td>funa:单击节点的回调函数，funb:单击根节点的回调函数</td>
+    <td>
+      把树的第1级节点显示出来，只用于初始化时，并指定单击(根)节点的回调函数
+      </td></tr>
+  <tr>
+    <td>add(NodeNormal node)</td>
+    <td>(none)</td>
+    <td>node:待添加的1级节点</td>
+    <td>
+    	给树添加第一级节点
+    	</td></tr>
+  <tr>
+    <td>defaultClickRootNode()</td>
+    <td>(none)</td>
+    <td>(none)</td>
+    <td>默认的单击根节点的响应方法
+    	</td></tr>
+  <tr>
+    <td>defaultClickNode(Node node)</td>
+    <td>(none)</td>
+    <td>node:被点击的节点</td>
+    <td>默认的单击节点的响应方法
+    	</td></tr>
+  <tr>
+    <td>hideTreeBody()</td>
+    <td>(none)</td>
+    <td>(none)</td>
+    <td>隐藏树身
+    	</td></tr>
+  <tr>
+    <td>showTreeBody()</td>
+    <td>(none)</td>
+    <td>(none)</td>
+    <td>显示树身
+    	</td></tr>
+	</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+<!-- 第2个类 -->
+<br /><br /><br /><br /><br />
+<a name="TreeNormal"><!-- --></a>
+<h2>类 TreeNormal</h2>
+<h6>	TreeNormal代表普通树的数据结构，可以获得数组形式的所有节点和树形式的所有节点，可以获得包含自己的树对象。
+</h6>
+
+<h4>另请参见：</h4>
+<p>
+	<a href="#DivTreeNormal">DivTreeNormal</a><br />
+	<a href="#NodeNormal">NodeNormal</a>
+</p>
+<table class="reference" cellspacing="0" border="1" >
+  <tbody>
+  <tr>
+    <th>域和方法</th>
+    <th>返回值</th>
+    <th>参数</th>
+    <th>描述</th></tr>
+  <tr>
+    <td>treename</td>
+    <td>Stirng</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得树的根节点名称
+    	</td></tr>
+  <tr>
+    <td>maxlevel</td>
+    <td>int</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得树的最大级别，就是层数
+    	</td></tr>
+  <tr>
+    <td>root</td>
+    <td>NodeNormal</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得树的根节点，然后可以获得所有节点
+    	</td></tr>
+  <tr>
+    <td>divtree</td>
+    <td>DivTreeNormal</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得树
+    	</td></tr>
+  <tr>
+    <td>treeArray</td>
+    <td>Array:NodeNormal</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得树所有节点对应的一个简单的数组
+    	</td></tr>
+
+	</tbody>
+</table>
+
+
+
+
+
+
+
+<!-- 第3个类 -->
+<br /><br /><br /><br /><br />
+<a name="NodeNormal"><!-- --></a>
+<h2>类 NodeNormal</h2>
+<h6>	NodeNormal代表普通节点。</h6>
+<pre style="font:normal 12px 'Courier New';">
+关于给节点加属性：
+如想要加属性name2，
+可以在js数据文件中设置相应的属性，如下
+node1 = new xyTree.Node('下关分局');
+node1.id = 1;
+node1.name2 = '分局';
+tree1.add(node1);
+就可以了，当然，id属性不是必须的.
+还有，自己设的属性名不能是parent,tree等下面表中的属性
+
+如果愿意，可以给节点指定不同图标，如下,也是在js数据文件中。
+node1 = new xyTree.Node('下关分局');
+node1.img = "images/1.gif";
+通常情况下，要指定就全指定，要么就都不指定。
+</pre>
+	
+	
+	
+	<br />
+	
+ 
+ 
+<h4>另请参见：</h4>
+<p>
+	<a href="#DivTreeNormal">DivTreeNormal</a><br />
+	<a href="#TreeNormal">TreeNormal</a>
+</p>
+<table class="reference" cellspacing="0" border="1" >
+  <tbody>
+  <tr>
+    <th>域和方法</th>
+    <th>返回值</th>
+    <th>参数</th>
+    <th>描述</th></tr>
+  <tr>
+    <td>name</td>
+    <td>Stirng</td>
+    <td>(none)</td>
+    <td>
+    	只读域，节点名称，也就是在页面的显示
+    	</td></tr>
+  <tr>
+    <td>img</td>
+    <td>Stirng</td>
+    <td>(none)</td>
+    <td>
+    	可读写域，节点的图标路径，初始化节点时指定或者不指定
+    	</td></tr>
+  <tr>
+    <td>parent</td>
+    <td>NodeNormal</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得节点的父节点，只有根节点的该属性值为null
+    	</td></tr>
+  <tr>
+    <td>previous</td>
+    <td>NodeNormal</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得节点的前一个节点
+    	</td></tr>
+  <tr>
+    <td>next</td>
+    <td>NodeNormal</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得节点的下一个节点
+    	</td></tr>
+  <tr>
+    <td>child</td>
+    <td>Array</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得节点的子节点，数组成员类型还是NodeNormal
+    	</td></tr>
+  <tr>
+    <td>level</td>
+    <td>int</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得节点的级别，根节点为0
+    	</td></tr>
+  <tr>
+    <td>tree</td>
+    <td>TreeNormal</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得节点的树对象，如要获得最外层的树则使用node.tree.divtree
+    	</td></tr>
+  <tr>
+    <td>add(NodeNormal node)</td>
+    <td>(none)</td>
+    <td>node:待添加的节点</td>
+    <td>
+    	给节点添加子节点
+    	</td></tr>
+	</tbody>
+</table>
+
+
+
+
+
+<!-- 第4个类 -->
+<br /><br /><br /><br /><br />
+<a name="DivTree"><!-- --></a>
+<h2>类 DivTree</h2>
+
+<h6>	DivTree代表复选框树。</h6>
+使用和<a href="#DivTreeNormal">DivTreeNormal</a>一样，只是方法多了几个。
+<br/>
+<ul>
+<li style="margin:5px;">
+脚本是一种很自由的东西，有些功能在DivTree类中实现，有些功能在Node类中实现，还有些功能在
+两个类里面都实现，不过是一个类的方法里只有一句话，调用另一个类的方法。
+</li>
+<li style="margin:5px;">
+init()方法的实现和以前不同了，有默认的行为 
+</li>
+<li style="margin:5px;">
+addDynamic()方法注意要添加子节点的节点自己必须已经被加载到树中，<br/>
+不能这样：定义两个节点，并把一个定义为另一个的父节点，再把父节点加载到树中<br/>
+应该这样：定义一个节点，加载到树中，再定义一个节点，加载到刚才节点下面 
+</li>
+<li style="margin:5px;">
+     最简单省事的办法，我建议在用户访问页面时一次性加载所有节点，或干脆和我一样写成js数据文件，而不要动态添加节点。
+
+     <br  style="margin:5px;"/>如果仍然希望在用户点击节点时通过ajax动态添加节点，这个应该还是可以的，不过要：
+<br  style="margin:5px;"/>(1) 在从数据库读取每个节点时，同时获取它有无子节点，并保存在客户端的树节点的自定义属性中
+<br  style="margin:5px;"/>(2) 自己写树的点击节点的事件，脚本判断这个节点是否有子节点，（通过自定义属性）
+<br  style="margin:5px;"/>(2-1)无，什么都不做
+<br  style="margin:5px;"/>(2-2)有，当前客户端树的被点击节点有子节点吗？
+<br  style="margin:5px;"/>(2-2-1)有则直接显示(调用树的expandNode()方法，传的参数应该是任意一个子节点)，或什么都不做
+<br  style="margin:5px;"/>(2-2-2)无则用ajax访问数据库，得到节点并生成Node对象，再调用父节点的addDynamic()方法动态添加并会自动显示。
+</li>
+
+</ul>
+
+ 
+<h4>另请参见：</h4>
+<p>
+	<a href="#DivTreeNormal">DivTreeNormal</a>
+</p>
+	
+<table class="reference" cellspacing="0" border="1" >
+  <tbody>
+  <tr>
+    <th width="15%">域和方法</th>
+    <th width="25%">返回值</th>
+    <th width="25%">参数</th>
+    <th width="35%">描述</th></tr>
+  <tr>
+    <td>DivTree(String name)</td>
+    <td width="">构造方法，返回一个xyTree.DivTree对象</td>
+    <td width="">name:根节点名称</td>
+    <td width="">
+    	建立一个复选框树对象。
+    	</td></tr>
+  <tr>
+    <td>DivTree(String name,String img)</td>
+    <td>构造方法，返回一个xyTree.DivTree对象</td>
+    <td>name:根节点名称<br/>img:用户指定的根节点图标</td>
+    <td>
+    	建立一个复选框树对象。并指定了根节点图标
+      <br/>从以下版本开始：4.1
+    	</td></tr>
+  <tr>
+    <td>tree</td>
+    <td>xyTree.Tree</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得树的节点数组对象
+    	</td></tr>
+  <tr>
+    <td>div</td>
+    <td>HTMLElement:div</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得树的DOM对象
+    	</td></tr>
+  <tr>
+    <td>add(xyTree.Node node)</td>
+    <td>(none)</td>
+    <td>node:待添加的1级节点</td>
+    <td>
+      给树添加第一级节点
+      </td></tr>
+  <tr>
+    <td>addDynamic(xyTree.Node node)</td>
+    <td>(none)</td>
+    <td>node:动态添加的一级节点</td>
+    <td>
+      给树动态添加一级节点，页面上立刻显示,背景渐变
+      <br/>从以下版本开始：4.1
+      </td></tr>
+  <tr>
+    <td>addDynamic(Array:xyTree.Node arr)</td>
+    <td>(none)</td>
+    <td>arr:动态添加的一级节点数组</td>
+    <td>
+      给树动态添加一批一级节点，页面上立刻显示,背景渐变
+      <br/>从以下版本开始：4.1
+      </td></tr>
+  <tr>
+    <td>expandNode(xyTree.Node node)</td>
+    <td>(none)</td>
+    <td>node:将要显示的节点</td>
+    <td>树显示指定的节点,有默认的背景渐变时间是300
+      <br/>从以下版本开始：4.1
+      </td></tr>
+  <tr>
+    <td>expandNode(xyTree.Node node,int ms)</td>
+    <td>(none)</td>
+    <td>node:将要显示的节点，ms:渐变的毫秒间隔</td>
+    <td>树显示指定的节点，背景渐变
+      <br/>从以下版本开始：4.1
+      </td></tr>
+  <tr>
+    <td>expandCheckedNode(xyTree.Node node)</td>
+    <td>(none)</td>
+    <td>node:将要显示的节点</td>
+    <td>树显示指定的节点并选中，背景渐变，有默认的背景渐变时间是300
+      <br/>从以下版本开始：4.1
+      </td></tr>
+  <tr>
+    <td>expandCheckedNode(xyTree.Node node,int ms)</td>
+    <td>(none)</td>
+    <td>node:将要显示的节点，ms:渐变的毫秒间隔</td>
+    <td>树显示指定的节点并选中，背景渐变
+      <br/>从以下版本开始：4.1
+      </td></tr>
+  <tr>
+    <td>findOneNodeByName(String name)</td>
+    <td>xyTree.Node</td>
+    <td>name:想找的节点名称</td>
+    <td>根据名称得到一个节点，如果树有重复名称的节点，则只返回先加载到树里的那一个。
+      <br/>从以下版本开始：4.1
+      </td></tr>
+  <tr>
+    <td>findOneNodeById(String | int   id )</td>
+    <td>xyTree.Node</td>
+    <td>id:想找的节点id，是用户自己定义的</td>
+    <td>根据id寻找一个节点，用户必须给每个节点设id属性，并保证它的唯一性
+      <br/>从以下版本开始：4.1
+      </td></tr>
+  
+  <tr>
+    <td>getNodes()</td>
+    <td>Array:xyTree.Node</td>
+    <td>(none)</td>
+    <td>返回节点数组，不含子节点，较常用
+    	</td></tr>
+  <tr>
+    <td>getNodesAll()</td>
+    <td>Array:xyTree.Node</td>
+    <td>(none)</td>
+    <td>返回节点数组，全部
+    	</td></tr>
+  <tr>
+    <td>getNodesMoji()</td>
+    <td>Array:xyTree.Node</td>
+    <td>(none)</td>
+    <td>返回节点数组，末级节点，不一定最后一层
+    	</td></tr>
+
+  <tr>
+    <td>getNodesDisplay()</td>
+    <td>Array:xyTree.Node</td>
+    <td>(none)</td>
+    <td>返回节点数组，正在显示的最末级节点。也就是说，看不到的节点即便它被选中了，也不会返回
+      <br/>从以下版本开始：4.11
+      </td></tr>
+
+  <tr>
+    <td>hideTreeBody()</td>
+    <td>(none)</td>
+    <td>(none)</td>
+    <td>隐藏树身
+    	</td></tr>
+  <tr>
+    <td>init()</td>
+    <td>(none)</td>
+    <td>(none)</td>
+    <td>
+      把树的第1级节点显示出来，只用于初始化时。有默认的点击节点的方法，
+      默认为点击复选框。<br/>
+      通常状况下用户会在网页初始化程序中调用
+      </td></tr>
+  <tr>
+    <td>init(Function funa,Function funb)</td>
+    <td>(none)</td>
+    <td>funa:单击节点的回调函数，funb:单击根节点的回调函数</td>
+    <td>
+      把树的第1级节点显示出来，只用于初始化时，并指定单击(根)节点的回调函数
+      <br/>通常状况下用户会在网页初始化程序中调用
+      <br/>从以下版本开始：4.1
+      </td></tr>
+  <tr>
+    <td>initClearAllCheckBox()</td>
+    <td>(none)</td>
+    <td>(none)</td>
+    <td>清除节点的选中状态
+      <br/>从以下版本开始：4.1
+      </td></tr>
+  <tr>
+    <td>initTreeForm()</td>
+    <td>(none)</td>
+    <td>(none)</td>
+    <td>树的形状复位
+      <br/>从以下版本开始：4.1
+      </td></tr>
+  <tr>
+    <td>initReset()</td>
+    <td>(none)</td>
+    <td>(none)</td>
+    <td>树的完全复位，等同于最开始加载状态，实际上是连续执行了上面两个方法
+      <br/>从以下版本开始：4.1
+      </td></tr>
+
+  <tr>
+    <td>isSelectAll()</td>
+    <td>boolean</td>
+    <td>(none)</td>
+    <td>所有节点是否都被选中，是则true
+      </td></tr>
+  <tr>
+    <td>showTreeBody()</td>
+    <td>(none)</td>
+    <td>(none)</td>
+    <td>显示树身
+    	</td></tr>
+  
+  
+	</tbody>
+</table>
+
+
+
+
+
+<!-- 第5个类 -->
+<br /><br /><br /><br /><br />
+<a name="Tree"><!-- --></a>
+<h2>类 Tree</h2>
+<h6>	Tree代表复选框树的数据结构，可以获得数组形式的所有节点和树形式的所有节点，可以获得包含自己的树对象。
+</h6>
+公共属性和<a href="#TreeNormal">TreeNormal</a>一样，
+<h4>另请参见：</h4>
+<p>
+	<a href="#DivTree">DivTree</a><br />
+	<a href="#Node">Node</a>
+</p>
+<table class="reference" cellspacing="0" border="1" >
+  <tbody>
+  <tr>
+    <th>域和方法</th>
+    <th>返回值</th>
+    <th>参数</th>
+    <th>描述</th></tr>
+  <tr>
+    <td>treename</td>
+    <td>Stirng</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得树的根节点名称
+    	</td></tr>
+  <tr>
+    <td>maxlevel</td>
+    <td>int</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得树的最大级别，就是层数
+    	</td></tr>
+  <tr>
+    <td>root</td>
+    <td>xyTree.Node</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得树的根节点，然后可以获得所有节点
+    	</td></tr>
+  <tr>
+    <td>divtree</td>
+    <td>xyTree.DivTree</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得树
+    	</td></tr>
+  <tr>
+    <td>treeArray</td>
+    <td>Array:xyTree.Node</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得树所有节点对应的一个简单的数组
+    	</td></tr>
+
+	</tbody>
+</table>
+
+
+
+
+
+
+<!-- 第6个类 -->
+<br /><br /><br /><br /><br />
+<a name="Node"><!-- --></a>
+<h2>类 Node</h2>
+<h6>	Node代表复选框节点。</h6>
+
+关于给节点加属性：看<a href="#NodeNormal">NodeNormal</a>类的说明<br />
+其实与NodeNormal类差别还是不小的，但是公共属性一样。
+<ul>
+<li>
+动态添加节点的注意点同<a href="#DivTree">DivTree</a>上
+</li>
+<li>
+颜色渐变方法slowChange()最后会强制节点文字的背景变成白色,可能有的用户的树的背景色不是白色的，
+<br/>方法是:
+<br/>在树初始化后，加一句：xyTree.CONSTANT.color = ['#ffff00','#ffff33','#ffff66','#ffff99','#ffffcc','#ffffff'];
+把最后一项改成自己的背景色即可。
+</li>
+<li>
+如果觉得颜色渐变方法时间太长的话，方法为
+<br/>在树初始化后，加一句：xyTree.CONSTANT.timenum = 100;
+把最后一项改成自己需要的时间即可。单位：毫秒
+</li>
+
+</ul>
+	
+<h4>另请参见：</h4>
+<p>
+	<a href="#DivTree">DivTree</a><br />
+<a href="#Tree">Tree</a>
+</p>
+<table class="reference" cellspacing="0" border="1" width="100%">
+  <tbody>
+  <tr>
+    <th width="25%">域和方法</th>
+    <th width="25%">返回值</th>
+    <th width="25%">参数</th>
+    <th width="25%">描述</th></tr>
+  <tr>
+    <td width="25%">name</td>
+    <td width="25%">Stirng</td>
+    <td width="25%">(none)</td>
+    <td width="25%">
+    	只读域，节点名称，也就是在页面的显示
+    	</td></tr>
+  <tr>
+    <td>img</td>
+    <td>Stirng</td>
+    <td>(none)</td>
+    <td>
+    	可读写域，节点的图标路径，初始化节点时指定或者不指定
+    	</td></tr>
+  <tr>
+    <td>parent</td>
+    <td>xyTree.Node</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得节点的父节点，只有根节点的该属性值为null
+    	</td></tr>
+  <tr>
+    <td>previous</td>
+    <td>xyTree.Node</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得节点的前一个节点
+    	</td></tr>
+  <tr>
+    <td>next</td>
+    <td>xyTree.Node</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得节点的下一个节点
+    	</td></tr>
+  <tr>
+    <td>child</td>
+    <td>Array:xyTree.Node</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得节点的子节点，数组成员类型还是xyTree.Node
+    	</td></tr>
+  <tr>
+    <td>level</td>
+    <td>int</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得节点的级别，根节点为0
+    	</td></tr>
+  <tr>
+    <td>tree</td>
+    <td>xyTree.Tree</td>
+    <td>(none)</td>
+    <td>
+    	只读域，获得节点的树对象，如要获得最外层的树则使用node.tree.divtree
+    	</td></tr>
+
+  <tr>
+    <td>img</td>
+    <td>String</td>
+    <td>(none)</td>
+    <td>
+      可读写域，用来设置节点的图片url
+      <br/>从以下版本开始：4.1
+      </td></tr>
+
+  <tr>
+    <td>add(xyTree.Node node)</td>
+    <td>(none)</td>
+    <td>node:待添加的节点</td>
+    <td>
+    	给节点添加子节点
+    	</td></tr>
+  <tr>
+    <td>addDynamic(xyTree.Node node)</td>
+    <td>(none)</td>
+    <td>node:动态添加的节点</td>
+    <td>
+      给节点动态添加子节点
+      <br/>从以下版本开始：4.1
+      </td></tr>
+  <tr>
+    <td>addDynamic(Array:xyTree.Node arr)</td>
+    <td>(none)</td>
+    <td>arr:动态添加的节点数组</td>
+    <td>
+      给节点批量的动态添加子节点
+      <br/>从以下版本开始：4.1
+      </td></tr>
+	
+  <tr>
+    <td>addDynamic(Array:xyTree.Node arr)</td>
+    <td>(none)</td>
+    <td>arr:动态添加的节点数组</td>
+    <td>
+      给节点批量的动态添加子节点
+      <br/>从以下版本开始：4.1
+      </td></tr>
+
+  <tr>
+    <td>loadingGif()</td>
+    <td>(none)</td>
+    <td>(none)</td>
+    <td>
+      使节点的文件夹图标显示为调用的样子
+      <br/>从以下版本开始：4.12
+      </td></tr>
+
+  <tr>
+    <td>loadingGifRenew()</td>
+    <td>(none)</td>
+    <td>(none)</td>
+    <td>
+      使节点的文件夹图标显示从调用的样子恢复成正常模样
+      <br/>从以下版本开始：4.12
+      </td></tr>
+
+  
+  <tr>
+    <td>slowChange()</td>
+    <td>(none)</td>
+    <td>(none)</td>
+    <td>
+      节点背景色渐变，默认300毫秒
+      <br/>从以下版本开始：4.1
+      </td></tr>
+  <tr>
+    <td>slowChange(int ms)</td>
+    <td>(none)</td>
+    <td>ms:渐变的ms间隔</td>
+    <td>
+      节点背景色渐变
+      <br/>从以下版本开始：4.1
+      </td></tr>
+  <tr>
+    <td>expand()</td>
+    <td>(none)</td>
+    <td>(none)</td>
+    <td>
+      把自己显示出来，在DivTree类中有类似方法，有渐变
+      <br/>从以下版本开始：4.1
+      </td></tr>
+  <tr>
+    <td>expandChecked()</td>
+    <td>(none)</td>
+    <td>(none)</td>
+    <td>
+      把自己显示出来并选中，在DivTree类中有类似方法，有渐变
+      <br/>从以下版本开始：4.1
+      </td></tr>
+  <tr>
+    <td>getNodeLink()</td>
+    <td>Array:xyTree.Node</td>
+    <td>(none)</td>
+    <td>
+      返回从根节点到自己的节点链，0是根节点，最后是自己
+      <br/>从以下版本开始：4.1
+      </td></tr>
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+<br /><br /><br /><br /><br /><br />
+<a name="gengxinshuoming"><!-- --></a>
+更新说明：
+<pre style="font:normal 12px 'Courier New';">
+4.12版更新说明：(2007/07/27)
+(1)修正重要bug：在IE浏览器中，如果设置
+   IE->工具->Internet选项->常规->设置->每次访问此页时检查，
+   那么图片会莫名其妙消失，现已更正。
+   原因：
+   单击链接<a href="......"></a>元素会有奇怪的特征，图片会消失
+   解决方案：
+   (1-1)去除html代码和javascript代码中的href属性，不用。
+   (1-2)不知为何，样式中鼠标移上的样式没有显示。
+   (1-3)使用万能的javascript，定义如下，样式当然随便：
+     a.onmouseover = function (){this.style.color='blue';}
+     a.onmouseout  = function (){this.style.color='black';}
+(2)添加Node类的方法loadingGif()和loadingGifRenew()方法
+   会使节点的文件夹图标显示为调用的样子，另一个恢复
+(3)写了一个模拟ajax的示例，有些不满意，主要是
+   其实节点是有子节点的，可是第一次显示出来时是个文件图标而非文件夹图标，
+   加号也是的，将来可能会写一个AjaxTreeNormal类和AjaxTree类。
+   难道要使用多重继承吗？不敢想象。
+(4)小插曲：火狐中允许非标准数组写法[1,3,77,]，而IE中只有标准数组写法[1,3,77]      
+   另：火狐中鼠标的指针样式cursor好像可选值要少一些，IE多一些
+(5)这一版更新的文件很多，不再列举   
+   
+
+(2)本来说这一版要实现继承的，但未实现。为了不食言，定义为4.11版。
+(3)关于IE显示图片丢失的情况，确保IE->工具->Internet选项->常规->
+   设置->自动，情况就好多了。这也是IE默认配置。
+   如果设置为“每次访问此页时检查”(显然是Web程序员的设置)会丢失图片，但在图片处右击鼠标，
+   选择“显示图片”，倒也能显示，奇怪的IE。   
+
+4.11版更新说明：(2007/07/21)
+(1)添加DivTree树的第4个返回节点的函数getNodesDisplay，
+   意思是根据当前树的展开形状返回最末级节点，这个最末级节点是眼睛看到的，
+   不一定是真正的叶节点。
+(2)本来说这一版要实现继承的，但未实现。为了不食言，定义为4.11版。
+(3)关于IE显示图片丢失的情况，确保IE->工具->Internet选项->常规->
+   设置->自动，情况就好多了。这也是IE默认配置。
+   如果设置为“每次访问此页时检查”(显然是Web程序员的设置)会丢失图片，但在图片处右击鼠标，
+   选择“显示图片”，倒也能显示，奇怪的IE。   
+
+4.1版更新说明：(2007/06/16)
+(1)使用方法大改变，现在用户只需把xyTree文件夹和html文件放到一起就可以了，
+   目录结构更加清晰，更像是一个组件包了。
+(2)添加了命名空间xyTree，为此修改了所有的js文件和css文件，还包括数据js文件.
+   所以原先的用户需要替换程序js文件和css文件，还修改数据js文件，是有点麻烦。
+(3)原先在html文件中是：
+	document.getElementById('ceshi1').appendChild(treeXiaqu.div);
+	treeXiaqu.init(); //这句话不会象前一版本默认有对话框弹出
+   现在默认是点击复选框或文件夹（视哪种树而定，提供缺省单击的行为，见示例5和示例6），
+   如果用户不满意，可以自己写回调函数，见下面的说明(8)
+(4)去除了一个小bug，如果用户仍然想使用4.0版的树，可以，但必须自己改DivTree.js 
+    第326行原先是 
+    this.div.firstChild.firstChild.src = TreeConfigNormal.rootIcon; 
+    应改成: 
+    this.div.firstChild.firstChild.src = TreeConfig.rootIcon;
+    第331行原先是 
+    this.div.firstChild.firstChild.src = TreeConfigNormal.openRootIcon; 
+    应改成: 
+    this.div.firstChild.firstChild.src = TreeConfig.openRootIcon;
+(5) 现在可以对节点方便的指定图片，如果不指定，就使用
+    TreeConfig或TreeConfigNormal的缺省图片。
+    不管哪种树，想指定根节点就在树(在js数据文件中)的构造方法的第二个参数填上图片路径，
+    想指定节点的图标就在初始化节点时(在js数据文件中)加img属性，见文档中的说明。
+    还可以改样式表第21行的样式，这个样式决定了指定的图片样式，而不会影响缺省图片的样式。
+(6) 添加了一个复选框树的方法，initClearAllCheckBox(),
+    可以清空树的所有被选中的复选框，树的形状不变。
+(7) 添加了一个复选框树的方法，initTreeForm(),
+    可以把树的节点展开形状恢复到初始状态，但节点的选中情况不变
+(8) 添加了一个复选框树的方法，initReset(),
+    可以清空树的所有被选中的复选框，并且把树的节点展开形状恢复到初始状态。
+(9) 添加了我刚刚学会的回调函数的用法，           
+    回调函数的用法是这样的：
+    程序库中（就是我写的程序）
+    function a(funb){
+      //执行一些过程，结果保存在result变量中
+      var result = /* 结果 */;
+      funb(result);    //funb是个您写的函数的名称
+    }
+    而您写的程序（html或js）中有这个函数
+    function funbbb(resu){
+      alert(resu);
+      /*在这里就得到了结果，可能是对象或数值，并可以随便使用*/
+    }
+    您这样调程序库
+    a(funbbb);
+    上面这句的意思是先到程序库中执行一个函数，然后，自动
+    返回到您写的函数中，还能从参数中得到结果。参数的个数最好与库的开发者指定的个数相同。
+    回调函数的好处是：隔离了库和用户，现在您不必修改程序库也可以自由使用（注意作用域）。
+    当然您要改了再用，也没关系，改吧。
+    这我这里，回调函数的确是一种“漂亮的解决方案”，
+    主要是用户的html中树的初始化方法先暂时有两种。
+    第一种：treeXiaqu.init();//提供默认的行为
+    第二种：treeXiaqu.init(funa,funb)//见示例和文档
+(10)可以动态添加节点了，不能删除，也不打算做，又开始跟刚开始写这个程序时一样鼓捣竖线，加号，文件夹
+(11)节点的颜色渐变，
+(12)还有一些琐碎方法不再列举了
+
+    
+    
+    
+
+4.0版更新说明：(2007/05/16)
+1）在IE6.0和FireFox2.0上测试通过，其实就css文件里多了一句话
+2）专门加了一个API使用文档。
+3）为了在同一个文件中混合使用两种树，改类名了，
+4）添加了隐藏树身和显示树身的方法
+
+3.1版更新说明
+(1)图片改成gif
+(2)对对象的命名有了好方法。
+
+3.0版更新说明：
+新增方法：
+(1)树的方法getNodesAll(),返回一个数组，所有被选中的节点（当然不含半灰色的节点，下同）
+(2)树的方法getNodesMoji(),返回一个数组，末级所有被选中的节点，注意不一定是最后一层。
+(3)把单击一般节点和根节点的方法放到DivTree.js文件的最后，方便使用者修改。
+(4)单击一般节点的方法：clickNode()
+(5)单击根节点的方法:clickRootNode()，一般用户都要修改
+(6)又把单击根节点的图标的方式修改了，
+   改成和最开始一样，点一下，其余节点消失，再点出现。
+(7)试图用document.createDocumentFragment()优化代码，不过看起来没什么效果。
+
+2007/02/09
+新加方法判断是否根节点被选中
+isSelectAll();
+true表示被选中
+false表示不被选中
+
+</pre>
+<br /><br /><br /><br /><br /><br />
+</body>
+</html>
